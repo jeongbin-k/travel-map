@@ -10,9 +10,16 @@ import "./App.css";
 
 function App() {
   const svgRef = useRef<SVGSVGElement>(null);
+  // 컴포넌트 내부에서 useRef로 관리 (경로 확인: public/sounds/airplane.m4a)
+  const airplaneAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!svgRef.current) return;
+
+    // 초기 오디오 객체 생성 및 설정
+    const audio = new Audio("/sounds/airplane.mp3");
+
+    airplaneAudioRef.current = audio;
 
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -31,21 +38,21 @@ function App() {
 
     const projection = d3
       .geoMercator()
-      .scale((width / (2 * Math.PI)) * 0.9)
-      .translate([width / 2, height * 0.6]);
+      .scale((width / (2 * Math.PI)) * 0.85)
+      .translate([width / 2, height * 0.7]);
 
     const pathGenerator = d3.geoPath().projection(projection);
 
-    const mapMargin = 0.05;
+    const mapMargin = 0.1;
     const extent: [[number, number], [number, number]] = [
       [-width * mapMargin, -height * mapMargin],
       [width * (1 + mapMargin), height * (1 + mapMargin)],
     ];
-    // 줌 동작 정의
+
     const zoomBehavior = d3
       .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([1, 8]) // 확대 배율 제한
-      .translateExtent(extent) // ★ 이 코드가 지도가 무한정 나가는 걸 막아줍니다.
+      .scaleExtent([1, 8])
+      .translateExtent(extent)
       .extent([
         [0, 0],
         [width, height],
@@ -63,12 +70,10 @@ function App() {
     ) {
       const [[x0, y0], [x1, y1]] = pathGenerator.bounds(d);
 
-      // event에 stopPropagation이 있는지 확인 후 호출 (안전한 타입 가드)
       if (event && typeof event.stopPropagation === "function") {
         event.stopPropagation();
       }
 
-      // svg.node()의 타입을 명확히 하여 any 방지
       const svgNode = svg.node();
       if (!svgNode) return;
 
@@ -78,9 +83,20 @@ function App() {
       if (isZoomedOut) {
         svg
           .transition()
-          .duration(750)
+          .duration(1000)
           .call(zoomBehavior.transform, d3.zoomIdentity);
       } else {
+        // [수정된 사운드 재생 부분]
+        const playAudio = airplaneAudioRef.current;
+        if (playAudio) {
+          playAudio.currentTime = 0;
+          playAudio.volume = 0.5;
+          // play()는 Promise를 반환하므로 catch를 확실히 달아줍니다.
+          playAudio.play().catch((e) => {
+            console.error("재생이 차단되었거나 파일이 없습니다:", e);
+          });
+        }
+
         const dx = x1 - x0;
         const dy = y1 - y0;
         const x = (x0 + x1) / 2;
@@ -88,7 +104,7 @@ function App() {
 
         const scale = Math.max(
           1,
-          Math.min(8, 0.7 / Math.max(dx / width, dy / height)), // 여백을 위해 0.7 권장
+          Math.min(25, 0.7 / Math.max(dx / width, dy / height)),
         );
         const translate: [number, number] = [
           width / 2 - scale * x,
@@ -96,8 +112,9 @@ function App() {
         ];
 
         svg
+          // 확대
           .transition()
-          .duration(750)
+          .duration(2000)
           .call(
             zoomBehavior.transform,
             d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale),
@@ -130,10 +147,9 @@ function App() {
         .on("mouseout", function () {
           d3.select(this).transition().duration(200).attr("fill", "#2a2a2a");
         })
-        .on("click", clicked); // ★ 클릭 이벤트 연결
+        .on("click", clicked);
     });
 
-    // 배경 클릭 시 리셋 (나라가 아닌 바다 클릭 시)
     svg.on("click", () => {
       svg
         .transition()
