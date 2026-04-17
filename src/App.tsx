@@ -38,7 +38,8 @@ function App() {
 
     const projection = d3
       .geoMercator()
-      .scale((width / (2 * Math.PI)) * 0.85)
+      .rotate([-10, 0])
+      .scale((width / (2 * Math.PI)) * 0.82)
       .translate([width / 2, height * 0.7]);
 
     const pathGenerator = d3.geoPath().projection(projection);
