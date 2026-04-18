@@ -87,6 +87,10 @@ function App() {
       event: React.MouseEvent | MouseEvent,
       d: Feature<Geometry, GeoJsonProperties>,
     ) {
+      // ★ 1. 함수가 실행되는 '지금 이 순간'의 창 크기를 가져옵니다.
+      const currentWidth = window.innerWidth;
+      const currentHeight = window.innerHeight;
+
       const [[x0, y0], [x1, y1]] = pathGenerator.bounds(d);
 
       if (event && typeof event.stopPropagation === "function") {
@@ -103,37 +107,29 @@ function App() {
         svg
           .transition()
           .duration(1000)
-          .ease(d3.easeCubicOut)
           .call(zoomBehavior.transform, d3.zoomIdentity);
       } else {
-        // 사운드 재생 (켜져 있을 때만)
-        if (airplaneAudioRef.current && isPlayingRef.current) {
-          airplaneAudioRef.current.currentTime = 0;
-          airplaneAudioRef.current.volume = 0.5;
-          airplaneAudioRef.current
-            .play()
-            .catch((e) => console.log("재생 차단됨:", e));
-        }
+        // 사운드 로직...
 
         const dx = x1 - x0;
         const dy = y1 - y0;
         const x = (x0 + x1) / 2;
         const y = (y0 + y1) / 2;
 
-        // 확대 배율 계산 (더 꽉 차게 0.85 적용)
+        // ★ 2. 여기서 width/height 대신 currentWidth/currentHeight를 사용하세요!
         const scale = Math.max(
           1,
-          Math.min(12, 0.85 / Math.max(dx / width, dy / height)),
+          Math.min(12, 0.85 / Math.max(dx / currentWidth, dy / currentHeight)),
         );
         const translate: [number, number] = [
-          width / 2 - scale * x,
-          height / 2 - scale * y,
+          currentWidth / 2 - scale * x,
+          currentHeight / 2 - scale * y,
         ];
 
         svg
           .transition()
-          .duration(2000)
-          .ease(d3.easePolyOut.exponent(3)) // 쫀득한 이동
+          .duration(1500)
+          .ease(d3.easePolyOut.exponent(3))
           .call(
             zoomBehavior.transform,
             d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale),
