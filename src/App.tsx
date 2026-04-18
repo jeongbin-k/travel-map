@@ -35,12 +35,13 @@ function App() {
 
   useEffect(() => {
     if (!svgRef.current) return;
+    // 초기 설정 값 정의 (재사용을 위해 변수로 관리)
+    const initialScaleRatio = 0.78;
+    const initialYOffset = 0.7;
 
-    // 1. 오디오 초기화 (파일 확장자 mp3/m4a 확인 필수!)
     const audio = new Audio("/sounds/airplane.mp3");
     audio.load();
     airplaneAudioRef.current = audio;
-
     const width = window.innerWidth;
     const height = window.innerHeight;
     const svg = d3.select(svgRef.current);
@@ -60,21 +61,21 @@ function App() {
     const projection = d3
       .geoMercator()
       .rotate([-10, 0])
-      .scale((width / (2 * Math.PI)) * 0.77)
-      .translate([width / 2, height * 0.7]);
-
+      .scale((width / (2 * Math.PI)) * initialScaleRatio)
+      .translate([width / 2, height * initialYOffset]);
     const pathGenerator = d3.geoPath().projection(projection);
-
-    const mapMargin = 0.15;
-    const extent: [[number, number], [number, number]] = [
-      [-width * mapMargin, -height * mapMargin],
-      [width * (1 + mapMargin), height * (1 + mapMargin)],
+    const mapMargin = 0.05;
+    const getExtent = (
+      w: number,
+      h: number,
+    ): [[number, number], [number, number]] => [
+      [-w * mapMargin, -h * mapMargin],
+      [w * (1 + mapMargin), h * (1 + mapMargin)],
     ];
-
     const zoomBehavior = d3
       .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([1, 12]) // 확대 한도 상향
-      .translateExtent(extent)
+      .scaleExtent([1, 12])
+      .translateExtent(getExtent(width, height))
       .on("zoom", (event) => {
         g.attr("transform", event.transform);
       });
@@ -131,7 +132,7 @@ function App() {
 
         svg
           .transition()
-          .duration(1500) // 비행기 소리에 맞춰 조금 더 부드럽게
+          .duration(2000)
           .ease(d3.easePolyOut.exponent(3)) // 쫀득한 이동
           .call(
             zoomBehavior.transform,
@@ -177,17 +178,38 @@ function App() {
         .ease(d3.easeCubicOut)
         .call(zoomBehavior.transform, d3.zoomIdentity);
     });
-
     const handleResize = () => {
+      // 최신 창 크기 반영
       const newWidth = window.innerWidth;
       const newHeight = window.innerHeight;
+
+      // 1. SVG 크기 및 viewBox 즉시 갱신
       svg.attr("viewBox", `0 0 ${newWidth} ${newHeight}`);
+
+      // 2. 투영법 재설정
+      projection
+        .scale((newWidth / (2 * Math.PI)) * initialScaleRatio)
+        .translate([newWidth / 2, newHeight * initialYOffset]);
+
+      // 3. 지도 경로 다시 그리기
+      g.selectAll<SVGPathElement, Feature<Geometry, GeoJsonProperties>>(
+        "path",
+      ).attr("d", (d) => pathGenerator(d));
+
+      // 4.중요: 줌 제한 구역(Extent)을 새 크기에 맞게 갱신
+      const newExtent = getExtent(newWidth, newHeight);
+      zoomBehavior.translateExtent(newExtent).extent([
+        [0, 0],
+        [newWidth, newHeight],
+      ]);
+
+      // 5.리사이즈 시 줌 상태를 강제로 리셋 (지도가 화면 밖으로 튕기는 현상 방지)
+      svg.call(zoomBehavior.transform, d3.zoomIdentity);
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
   return (
     <div className="map-wrapper">
       <Header
