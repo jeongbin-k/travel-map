@@ -109,7 +109,13 @@ function App() {
           .duration(1000)
           .call(zoomBehavior.transform, d3.zoomIdentity);
       } else {
-        // 사운드 로직...
+        if (airplaneAudioRef.current && isPlayingRef.current) {
+          airplaneAudioRef.current.currentTime = 0; // 재생 위치 초기화
+          airplaneAudioRef.current.volume = 0.5; // 볼륨 설정
+          airplaneAudioRef.current
+            .play()
+            .catch((e) => console.log("사운드 재생 실패:", e));
+        }
 
         const dx = x1 - x0;
         const dy = y1 - y0;
