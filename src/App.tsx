@@ -8,6 +8,7 @@ import type {
 } from "geojson";
 import "./App.css";
 import Header from "./components/Header";
+import PinCard from "./components/PinCard";
 
 type Page = "world" | "project" | "detail";
 
@@ -19,6 +20,12 @@ function App() {
   const isPlayingRef = useRef(true);
   const [currentPage, setCurrentPage] = useState<Page>("world");
   const [isPlaying, setIsPlaying] = useState(true);
+
+  // PinCard 관련 State 추가
+  const [projectionState, setProjectionState] = useState<{
+    proj: d3.GeoProjection;
+  } | null>(null);
+  const [zoomTransform, setZoomTransform] = useState({ k: 1, x: 0, y: 0 });
 
   // 사운드 토글 핸들러
   const handleSoundtrackClick = () => {
@@ -58,12 +65,14 @@ function App() {
     const g = svg.append("g");
 
     // 2. 레이아웃 최적화 (북반구 확보)
-    const projection = d3
+    const proj = d3
       .geoMercator()
       .rotate([-10, 0])
       .scale((width / (2 * Math.PI)) * initialScaleRatio)
       .translate([width / 2, height * initialYOffset]);
-    const pathGenerator = d3.geoPath().projection(projection);
+    setProjectionState({ proj });
+
+    const pathGenerator = d3.geoPath().projection(proj);
     const mapMargin = 0.05;
     const getExtent = (
       w: number,
@@ -78,6 +87,11 @@ function App() {
       .translateExtent(getExtent(width, height))
       .on("zoom", (event) => {
         g.attr("transform", event.transform);
+        setZoomTransform({
+          k: event.transform.k,
+          x: event.transform.x,
+          y: event.transform.y,
+        });
       });
 
     svg.call(zoomBehavior).on("dblclick.zoom", null);
@@ -189,7 +203,7 @@ function App() {
       svg.attr("viewBox", `0 0 ${newWidth} ${newHeight}`);
 
       // 2. 투영법 재설정
-      projection
+      proj
         .scale((newWidth / (2 * Math.PI)) * initialScaleRatio)
         .translate([newWidth / 2, newHeight * initialYOffset]);
 
@@ -221,6 +235,10 @@ function App() {
         onSoundtrackClick={handleSoundtrackClick}
       />
       <svg ref={svgRef} />
+      <PinCard
+        projection={projectionState?.proj ?? null}
+        zoomTransform={zoomTransform}
+      />
     </div>
   );
 }
