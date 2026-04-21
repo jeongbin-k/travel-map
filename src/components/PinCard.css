@@ -1,0 +1,170 @@
+/* PinCard.css */
+
+/* 투명 닫기용 오버레이 */
+.pin-overlay-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: all;
+}
+
+/* SVG 핀 + 선 레이어 */
+.pin-svg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.pin-dot {
+  fill: #e63946;
+  cursor: pointer;
+  pointer-events: all;
+  transition: r 0.15s ease;
+}
+
+.pin-dot--active {
+  fill: #ff6b6b;
+}
+
+.pin-line {
+  stroke: #e63946;
+  stroke-width: 1px;
+  opacity: 0.6;
+  stroke-dasharray: 4 3;
+}
+
+/* 카드 */
+.pin-card {
+  position: fixed;
+  z-index: 11;
+  background-color: #0f0f0f;
+  border: 1px solid #2c2c2c;
+  padding: 14px 16px;
+  width: 210px;
+  pointer-events: all;
+  animation: cardIn 0.2s ease forwards;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 타입 뱃지 */
+.pin-card__type {
+  display: inline-block;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  margin-bottom: 8px;
+  border-radius: 2px;
+}
+
+.pin-card__type--project {
+  background-color: #e63946;
+  color: #ffffff;
+}
+
+.pin-card__type--study {
+  background-color: #2c2c2c;
+  color: #aaaaaa;
+}
+
+/* 제목 */
+.pin-card__title {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 8px;
+  text-transform: lowercase;
+}
+
+/* 메타 (위치 + 날짜) */
+.pin-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pin-card__location {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  color: #888888;
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+
+.pin-card__date {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  color: #666666;
+  letter-spacing: 0.04em;
+}
+
+/* 구분선 */
+.pin-card__divider {
+  height: 1px;
+  background-color: #222222;
+  margin-bottom: 10px;
+}
+
+/* 설명 */
+.pin-card__description {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  color: #aaaaaa;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* 태그 */
+.pin-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.pin-card__tag {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 9px;
+  color: #888888;
+  background-color: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  padding: 2px 6px;
+  letter-spacing: 0.04em;
+}
+
+/* 링크 버튼 */
+.pin-card__link {
+  display: block;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #e63946;
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+}
+
+.pin-card__link:hover {
+  color: #ff6b6b;
+}
