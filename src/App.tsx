@@ -15,6 +15,16 @@ type Page = "world" | "project" | "detail";
 function App() {
   const svgRef = useRef<SVGSVGElement>(null);
   const airplaneAudioRef = useRef<HTMLAudioElement | null>(null);
+  const zoomBehaviorRef = useRef<d3.ZoomBehavior<
+    SVGSVGElement,
+    unknown
+  > | null>(null);
+  const svgSelectionRef = useRef<d3.Selection<
+    SVGSVGElement,
+    unknown,
+    null,
+    undefined
+  > | null>(null);
 
   // 사운드 상태 제어를 위한 ref (d3 핸들러 내부에서 최신 상태 참조용)
   const isPlayingRef = useRef(true);
@@ -45,7 +55,6 @@ function App() {
     // 초기 설정 값 정의 (재사용을 위해 변수로 관리)
     const initialScaleRatio = 0.78;
     const initialYOffset = 0.7;
-
     const audio = new Audio("/sounds/airplane.mp3");
     audio.load();
     airplaneAudioRef.current = audio;
@@ -93,6 +102,10 @@ function App() {
           y: event.transform.y,
         });
       });
+
+    // 핀 클릭시 지도 확대
+    zoomBehaviorRef.current = zoomBehavior;
+    svgSelectionRef.current = svg;
 
     svg.call(zoomBehavior).on("dblclick.zoom", null);
 
@@ -238,6 +251,10 @@ function App() {
       <PinCard
         projection={projectionState?.proj ?? null}
         zoomTransform={zoomTransform}
+        svgSelectionRef={svgSelectionRef}
+        zoomBehaviorRef={zoomBehaviorRef}
+        audioRef={airplaneAudioRef}
+        isPlayingRef={isPlayingRef}
       />
     </div>
   );
