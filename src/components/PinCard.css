@@ -1,11 +1,9 @@
-/* PinCard.css */
-
-/* 투명 닫기용 오버레이 */
-.pin-overlay-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 9;
-  pointer-events: all;
+@font-face {
+  font-family: "Cafe24Anemone";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Cafe24Ohsquare.woff")
+    format("woff");
+  font-weight: normal;
+  font-display: swap;
 }
 
 /* SVG 핀 + 선 레이어 */
@@ -19,100 +17,84 @@
 }
 
 .pin-dot {
-  fill: #e63946;
+  fill: red;
   cursor: pointer;
   pointer-events: all;
   transition: r 0.15s ease;
 }
 
-.pin-dot--active {
-  fill: #ff6b6b;
-}
-
 .pin-line {
-  stroke: #e63946;
+  stroke: #0f0f0f;
   stroke-width: 1px;
-  opacity: 0.6;
-  stroke-dasharray: 4 3;
 }
 
-/* 카드 */
+.pin-line--active {
+  opacity: 0.8;
+}
+
+/* 카드 - 항상 표시 */
 .pin-card {
   position: fixed;
   z-index: 11;
   background-color: #0f0f0f;
-  border: 1px solid #2c2c2c;
-  padding: 14px 16px;
-  width: 210px;
+  opacity: 0.8;
+  padding: 15px;
+  width: 170px;
+  border-radius: 5%;
+  cursor: pointer;
   pointer-events: all;
-  animation: cardIn 0.2s ease forwards;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
-@keyframes cardIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.pin-card:hover {
+  border-color: #444444;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8);
 }
 
-/* 타입 뱃지 */
-.pin-card__type {
-  display: inline-block;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 2px 6px;
-  margin-bottom: 8px;
-  border-radius: 2px;
+.pin-card--active {
+  border-color: #e63946;
+  box-shadow: 0 6px 28px rgba(230, 57, 70, 0.25);
 }
 
-.pin-card__type--project {
-  background-color: #e63946;
-  color: #ffffff;
-}
-
-.pin-card__type--study {
-  background-color: #2c2c2c;
-  color: #aaaaaa;
-}
-
-/* 제목 */
-.pin-card__title {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 22px;
+/* 장소 */
+.pin-card__location {
+  font-family: "Cafe24Anemone";
+  font-size: 2.7rem;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.02em;
   line-height: 1;
-  margin-bottom: 8px;
   text-transform: lowercase;
+  white-space: pre-line;
+  letter-spacing: 2.5px;
 }
 
-/* 메타 (위치 + 날짜) */
+/* 나라 */
+.pin-card__country {
+  display: block;
+  color: #fff;
+  font-size: 10px;
+  margin: 2px 0;
+}
+
+/* 메타 */
 .pin-card__meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-.pin-card__location {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+.pin-card__title {
   font-size: 9px;
   color: #888888;
-  text-transform: lowercase;
   letter-spacing: 0.04em;
 }
 
 .pin-card__date {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 9px;
   color: #666666;
   letter-spacing: 0.04em;
@@ -122,16 +104,15 @@
 .pin-card__divider {
   height: 1px;
   background-color: #222222;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 /* 설명 */
 .pin-card__description {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 11px;
   color: #aaaaaa;
   line-height: 1.5;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 /* 태그 */
@@ -139,11 +120,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .pin-card__tag {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 9px;
   color: #888888;
   background-color: #1a1a1a;
@@ -152,10 +132,9 @@
   letter-spacing: 0.04em;
 }
 
-/* 링크 버튼 */
+/* 링크 */
 .pin-card__link {
   display: block;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 10px;
   font-weight: 700;
   color: #e63946;
