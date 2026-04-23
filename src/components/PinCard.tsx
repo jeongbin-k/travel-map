@@ -196,12 +196,10 @@ export default function PinCard({
       {pins.map((pin) => {
         const pos = getScreenPos(pin.coords);
         const { left, top } = getCardPos(pos.x, pos.y, pin.cardOffset);
-        const isActive = activePin?.id === pin.id;
-
         return (
           <div
             key={pin.id}
-            className={`pin-card${isActive ? " pin-card--active" : ""}`}
+            className={"pin-card"}
             style={{ left, top }}
             onClick={(e) => handlePinClick(e, pin)}
           >
@@ -213,8 +211,16 @@ export default function PinCard({
             <div className="pin-card_divider" />
             {pin.projects.map((projects, i) => (
               <div key={i} className="pin-card_meta">
-                <span className="pin-card_title">{projects.title}</span>
-                <span className="pin-card_date">{projects.date}</span>
+                <div className="pin-card_meta-inner">
+                  <div className="pin-card_meta-front">
+                    <span className="pin-card_title">{projects.title}</span>
+                    <span className="pin-card_date">{projects.date}</span>
+                  </div>
+                  <div className="pin-card_meta-back">
+                    <span className="pin-card_title">{projects.title}</span>
+                    <span className="pin-card_date">{projects.date}</span>
+                  </div>
+                </div>
               </div>
             ))}
             {/* 추후 사용할 지 고민 */}

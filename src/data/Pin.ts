@@ -61,6 +61,6 @@ export const pins: PinData[] = [
     location1: "to",
     location2: "kyo",
     coords: [139.6917, 35.6895],
-    cardOffset: { x: 120, y: -100 },
+    cardOffset: { x: 150, y: 50 },
   },
 ];
