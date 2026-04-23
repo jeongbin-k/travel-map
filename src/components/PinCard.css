@@ -60,7 +60,7 @@
 }
 
 /* 장소 */
-.pin-card__location {
+.pin-card_location {
   font-family: "Cafe24Anemone";
   font-size: 2.7rem;
   font-weight: 800;
@@ -73,42 +73,42 @@
 }
 
 /* 나라 */
-.pin-card__country {
+.pin-card_country {
   display: block;
   color: #fff;
-  font-size: 10px;
+  font-size: 0.6rem;
   margin: 2px 0;
 }
 
 /* 메타 */
-.pin-card__meta {
+.pin-card_meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.pin-card__title {
+.pin-card_title {
   font-size: 9px;
   color: #888888;
   letter-spacing: 0.04em;
 }
 
-.pin-card__date {
+.pin-card_date {
   font-size: 9px;
   color: #666666;
   letter-spacing: 0.04em;
 }
 
 /* 구분선 */
-.pin-card__divider {
+.pin-card_divider {
   height: 1px;
   background-color: #222222;
-  margin-bottom: 8px;
+  margin: 5px 0;
 }
 
 /* 설명 */
-.pin-card__description {
+.pin-card_description {
   font-size: 11px;
   color: #aaaaaa;
   line-height: 1.5;
@@ -116,14 +116,14 @@
 }
 
 /* 태그 */
-.pin-card__tags {
+.pin-card_tags {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 10px;
 }
 
-.pin-card__tag {
+.pin-card_tag {
   font-size: 9px;
   color: #888888;
   background-color: #1a1a1a;
@@ -133,7 +133,7 @@
 }
 
 /* 링크 */
-.pin-card__link {
+.pin-card_link {
   display: block;
   font-size: 10px;
   font-weight: 700;
@@ -144,6 +144,6 @@
   transition: color 0.15s ease;
 }
 
-.pin-card__link:hover {
+.pin-card_link:hover {
   color: #ff6b6b;
 }

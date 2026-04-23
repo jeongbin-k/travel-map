@@ -205,33 +205,30 @@ export default function PinCard({
             style={{ left, top }}
             onClick={(e) => handlePinClick(e, pin)}
           >
-            <h1 className="pin-card__location">{pin.location1}</h1>
-            <span className="pin-card__country">{pin.country}</span>
-            <h1 className="pin-card__location">{pin.location2}</h1>
-            <div className="pin-card__meta">
-              <span className="pin-card__title">{pin.title}</span>
-              <span className="pin-card__date">{pin.date}</span>
+            <div className="pin-card_top">
+              <h1 className="pin-card_location">{pin.location1}</h1>
+              <span className="pin-card_country">{pin.country}</span>
+              <h1 className="pin-card_location">{pin.location2}</h1>
             </div>
-            <div className="pin-card__divider" />
-            <div className="pin-card__description">{pin.description}</div>
-            <div className="pin-card__tags">
-              {pin.tags.map((tag) => (
-                <span key={tag} className="pin-card__tag">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            {pin.link && (
+            <div className="pin-card_divider" />
+            {pin.projects.map((projects, i) => (
+              <div key={i} className="pin-card_meta">
+                <span className="pin-card_title">{projects.title}</span>
+                <span className="pin-card_date">{projects.date}</span>
+              </div>
+            ))}
+            {/* 추후 사용할 지 고민 */}
+            {/* {pin.link && (
               <a
                 href={pin.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="pin-card__link"
+                className="pin-card_link"
                 onClick={(e) => e.stopPropagation()}
               >
                 View Project →
               </a>
-            )}
+            )} */}
           </div>
         );
       })}
