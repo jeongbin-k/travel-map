@@ -7,6 +7,7 @@ import type {
   Feature,
 } from "geojson";
 import "./App.css";
+import "./reset.css";
 import Header from "./components/Header";
 import PinCard from "./components/PinCard";
 
@@ -114,7 +115,7 @@ function App() {
       event: React.MouseEvent | MouseEvent,
       d: Feature<Geometry, GeoJsonProperties>,
     ) {
-      // ★ 1. 함수가 실행되는 '지금 이 순간'의 창 크기를 가져옵니다.
+      // 1. 함수가 실행되는 '지금 이 순간'의 창 크기를 가져옵니다.
       const currentWidth = window.innerWidth;
       const currentHeight = window.innerHeight;
 
@@ -148,8 +149,6 @@ function App() {
         const dy = y1 - y0;
         const x = (x0 + x1) / 2;
         const y = (y0 + y1) / 2;
-
-        // ★ 2. 여기서 width/height 대신 currentWidth/currentHeight를 사용하세요!
         const scale = Math.max(
           1,
           Math.min(12, 0.85 / Math.max(dx / currentWidth, dy / currentHeight)),
