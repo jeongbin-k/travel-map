@@ -63,4 +63,21 @@ export const pins: PinData[] = [
     coords: [139.6917, 35.6895],
     cardOffset: { x: 150, y: 50 },
   },
+  {
+    id: 3,
+    projects: [
+      {
+        title: "Euro Study Case",
+        date: "2026.01",
+        type: "study",
+        description: "유럽 웹 접근성 표준(WCAG) 분석 연구",
+        tags: ["Accessibility", "WCAG 2.1"],
+      },
+    ],
+    country: "france",
+    location1: "pa",
+    location2: "ris",
+    coords: [2.3522, 48.8566],
+    cardOffset: { x: -180, y: -100 },
+  },
 ];
