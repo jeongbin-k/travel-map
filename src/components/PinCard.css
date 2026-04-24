@@ -8,7 +8,7 @@
 .project-panel {
   position: fixed;
   inset: 0;
-  background-color: rgba(10, 10, 10, 0.85);
+  background-color: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(3px);
   z-index: 20;
   opacity: 0;
@@ -178,7 +178,6 @@
   font-size: 2.7rem;
   font-weight: 800;
   color: #ffffff;
-  letter-spacing: -0.02em;
   line-height: 1;
   text-transform: lowercase;
   white-space: pre-line;
@@ -240,16 +239,9 @@
   transform: rotateX(180deg);
   background: linear-gradient(to bottom, #9f9f9f 50%, #ffffff 50%);
 }
-
-.pin-card_title {
+.pin-card_meta-front > span {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #fff;
-}
-
-.pin-card_date {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 400;
   color: #fff;
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, type RefObject } from "react";
+import { useCallback, useState, useEffect, type RefObject } from "react";
 import * as d3 from "d3";
 import type { GeoProjection } from "d3";
 import { pins, type PinData } from "../data/Pin";
@@ -16,6 +16,7 @@ interface PinCardProps {
   zoomBehaviorRef: RefObject<d3.ZoomBehavior<SVGSVGElement, unknown> | null>;
   audioRef: RefObject<HTMLAudioElement | null>;
   isPlayingRef: RefObject<boolean>;
+
   currentPage: "world" | "project" | "detail";
   onPageChange: (page: "world" | "project" | "detail") => void;
   activePin: PinData | null;
@@ -53,6 +54,17 @@ export default function PinCard({
     },
     [projection, zoomTransform],
   );
+
+  // 마우스 움직임에 따라 PinCard
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   const getCardPos = (
     screenX: number,
@@ -198,11 +210,30 @@ export default function PinCard({
         .map((pin) => {
           const pos = getScreenPos(pin.coords);
           const { left, top } = getCardPos(pos.x, pos.y, pin.cardOffset);
+
+          const cardCenterX = left + CARD_WIDTH / 2;
+          const cardCenterY = top + CARD_HEIGHT / 2;
+
+          // 마우스까지 거리 계산
+          const dist = Math.sqrt(
+            (mousePos.x - cardCenterX) ** 2 + (mousePos.y - cardCenterY) ** 2,
+          );
+
+          const threshold = 180;
+          const pull = dist < threshold ? 1 - dist / threshold : 0;
+          const dx = (mousePos.x - cardCenterX) * pull * 1;
+          const dy = (mousePos.y - cardCenterY) * pull * 1;
+
           return (
             <div
               key={pin.id}
               className="pin-card"
-              style={{ left, top }}
+              style={{
+                left,
+                top,
+                transform: `translate(${dx}px, ${dy}px)`,
+                transition: "transform 0.3s ease",
+              }}
               onClick={(e) => handlePinClick(e, pin)}
             >
               <div className="pin-card_top">
