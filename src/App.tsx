@@ -33,6 +33,33 @@ function App() {
   const [currentPage, setCurrentPage] = useState<Page>("world");
   const [isPlaying, setIsPlaying] = useState(true);
 
+  // App.tsx 내부
+
+  // 1. world로 돌아올 때 실행할 공통 로직 (Header, ProjectPanel)
+  const handleBackToWorld = () => {
+    setActivePin(null);
+    setShowPanel(false);
+    setCurrentPage("world");
+
+    // 줌 리셋 실행
+    if (svgSelectionRef.current && zoomBehaviorRef.current) {
+      svgSelectionRef.current
+        .transition()
+        .duration(1000)
+        .ease(d3.easeCubicOut)
+        .call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
+    }
+  };
+
+  // 1-2. Header에서 페이지를 바꿀 때 호출할 함수
+  const handlePageChange = (page: Page) => {
+    if (page === "world") {
+      handleBackToWorld();
+    } else {
+      setCurrentPage(page);
+    }
+  };
+
   //  핀카드, 프로젝트 나누는
   const [activePin, setActivePin] = useState<PinData | null>(null);
   const [showPanel, setShowPanel] = useState(false);
@@ -79,7 +106,7 @@ function App() {
 
     const g = svg.append("g");
 
-    // 2. 레이아웃 최적화
+    // 2. 레이아웃 최적화 (북반구까지)
     const proj = d3
       .geoMercator()
       .rotate([-10, 0])
@@ -243,11 +270,12 @@ function App() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   return (
     <div className="map-wrapper">
       <Header
         currentPage={currentPage}
-        onPageChange={setCurrentPage}
+        onPageChange={handlePageChange}
         isPlaying={isPlaying}
         onSoundtrackClick={handleSoundtrackClick}
       />
@@ -269,19 +297,7 @@ function App() {
         activePin={activePin}
         showPanel={showPanel}
         currentPage={currentPage}
-        onBack={() => {
-          setActivePin(null);
-          setShowPanel(false);
-          setCurrentPage("world");
-          // 줌 리셋 추가
-          if (svgSelectionRef.current && zoomBehaviorRef.current) {
-            svgSelectionRef.current
-              .transition()
-              .duration(800)
-              .ease(d3.easeCubicOut)
-              .call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
-          }
-        }}
+        onBack={handleBackToWorld}
         onProjectClick={() => setCurrentPage("detail")}
       />
     </div>
