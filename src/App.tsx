@@ -10,7 +10,8 @@ import "./App.css";
 import "./reset.css";
 import Header from "./components/Header";
 import PinCard from "./components/PinCard";
-
+import ProjectPanel from "./components/ProjectPanel";
+import { type PinData } from "./data/Pin";
 type Page = "world" | "project" | "detail";
 
 function App() {
@@ -31,6 +32,10 @@ function App() {
   const isPlayingRef = useRef(true);
   const [currentPage, setCurrentPage] = useState<Page>("world");
   const [isPlaying, setIsPlaying] = useState(true);
+
+  //  핀카드, 프로젝트 나누는
+  const [activePin, setActivePin] = useState<PinData | null>(null);
+  const [showPanel, setShowPanel] = useState(false);
 
   // PinCard 관련 State 추가
   const [projectionState, setProjectionState] = useState<{
@@ -74,7 +79,7 @@ function App() {
 
     const g = svg.append("g");
 
-    // 2. 레이아웃 최적화 (북반구 확보)
+    // 2. 레이아웃 최적화
     const proj = d3
       .geoMercator()
       .rotate([-10, 0])
@@ -139,7 +144,7 @@ function App() {
       } else {
         if (airplaneAudioRef.current && isPlayingRef.current) {
           airplaneAudioRef.current.currentTime = 0; // 재생 위치 초기화
-          airplaneAudioRef.current.volume = 0.5; // 볼륨 설정
+          airplaneAudioRef.current.volume = 0.7;
           airplaneAudioRef.current
             .play()
             .catch((e) => console.log("사운드 재생 실패:", e));
@@ -254,6 +259,30 @@ function App() {
         zoomBehaviorRef={zoomBehaviorRef}
         audioRef={airplaneAudioRef}
         isPlayingRef={isPlayingRef}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        activePin={activePin}
+        onActivePinChange={setActivePin}
+        onShowPanelChange={setShowPanel}
+      />
+      <ProjectPanel
+        activePin={activePin}
+        showPanel={showPanel}
+        currentPage={currentPage}
+        onBack={() => {
+          setActivePin(null);
+          setShowPanel(false);
+          setCurrentPage("world");
+          // 줌 리셋 추가
+          if (svgSelectionRef.current && zoomBehaviorRef.current) {
+            svgSelectionRef.current
+              .transition()
+              .duration(800)
+              .ease(d3.easeCubicOut)
+              .call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
+          }
+        }}
+        onProjectClick={() => setCurrentPage("detail")}
       />
     </div>
   );

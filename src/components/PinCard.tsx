@@ -1,5 +1,4 @@
-// components/PinCard.tsx
-import { useState, useCallback, type RefObject } from "react";
+import { useCallback, type RefObject } from "react";
 import * as d3 from "d3";
 import type { GeoProjection } from "d3";
 import { pins, type PinData } from "../data/Pin";
@@ -17,9 +16,14 @@ interface PinCardProps {
   zoomBehaviorRef: RefObject<d3.ZoomBehavior<SVGSVGElement, unknown> | null>;
   audioRef: RefObject<HTMLAudioElement | null>;
   isPlayingRef: RefObject<boolean>;
+  currentPage: "world" | "project" | "detail";
+  onPageChange: (page: "world" | "project" | "detail") => void;
+  activePin: PinData | null;
+  onActivePinChange: (pin: PinData | null) => void;
+  onShowPanelChange: (show: boolean) => void;
 }
 
-const ZOOM_SCALE = 6;
+const ZOOM_SCALE = 19;
 const CARD_WIDTH = 210;
 const CARD_HEIGHT = 180;
 
@@ -30,10 +34,12 @@ export default function PinCard({
   zoomBehaviorRef,
   audioRef,
   isPlayingRef,
+  currentPage,
+  onPageChange,
+  activePin,
+  onActivePinChange,
+  onShowPanelChange,
 }: PinCardProps) {
-  const [activePin, setActivePin] = useState<PinData | null>(null);
-
-  // coords [lng, lat] → 줌 transform 반영한 실제 화면 픽셀 좌표
   const getScreenPos = useCallback(
     (coords: [number, number]) => {
       if (!projection) return { x: 0, y: 0 };
@@ -48,7 +54,6 @@ export default function PinCard({
     [projection, zoomTransform],
   );
 
-  // cardOffset 기반 카드 위치 계산 + 화면 밖 방지
   const getCardPos = (
     screenX: number,
     screenY: number,
@@ -56,18 +61,15 @@ export default function PinCard({
   ) => {
     let left = screenX + offset.x - CARD_WIDTH / 2;
     let top = screenY + offset.y;
-
     if (left < 8) left = 8;
     if (left + CARD_WIDTH > window.innerWidth - 8)
       left = window.innerWidth - CARD_WIDTH - 8;
     if (top < 8) top = 8;
     if (top + CARD_HEIGHT > window.innerHeight - 8)
       top = window.innerHeight - CARD_HEIGHT - 8;
-
     return { left, top };
   };
 
-  // 핀 위치 기준으로 카드의 가장 가까운 엣지 포인트 계산
   const getLineEndPoint = (
     pinX: number,
     pinY: number,
@@ -76,26 +78,15 @@ export default function PinCard({
   ) => {
     const cardCenterX = cardLeft + CARD_WIDTH / 2;
     const cardCenterY = cardTop + CARD_HEIGHT / 2;
-
     const dx = pinX - cardCenterX;
     const dy = pinY - cardCenterY;
-
     if (Math.abs(dx) > Math.abs(dy)) {
-      // 좌우가 더 멀 때 → 카드 좌/우 엣지 중앙
-      return {
-        x: dx > 0 ? cardLeft + CARD_WIDTH : cardLeft,
-        y: cardCenterY,
-      };
+      return { x: dx > 0 ? cardLeft + CARD_WIDTH : cardLeft, y: cardCenterY };
     } else {
-      // 상하가 더 멀 때 → 카드 상/하 엣지 중앙
-      return {
-        x: cardCenterX,
-        y: dy > 0 ? cardTop + CARD_HEIGHT : cardTop,
-      };
+      return { x: cardCenterX, y: dy > 0 ? cardTop + CARD_HEIGHT : cardTop };
     }
   };
 
-  // 줌 리셋
   const resetZoom = useCallback(() => {
     const svg = svgSelectionRef.current;
     const zoom = zoomBehaviorRef.current;
@@ -107,13 +98,14 @@ export default function PinCard({
       .call(zoom.transform, d3.zoomIdentity);
   }, [svgSelectionRef, zoomBehaviorRef]);
 
-  // 카드/핀 클릭 → 줌인 or 리셋
   const handlePinClick = useCallback(
     (e: React.MouseEvent, pin: PinData) => {
       e.stopPropagation();
 
       if (activePin?.id === pin.id) {
-        setActivePin(null);
+        onActivePinChange(null);
+        onShowPanelChange(false);
+        onPageChange("world");
         resetZoom();
         return;
       }
@@ -126,7 +118,9 @@ export default function PinCard({
           .catch((e) => console.log("사운드 재생 실패:", e));
       }
 
-      setActivePin(pin);
+      onActivePinChange(pin);
+      onPageChange("project");
+      onShowPanelChange(false);
 
       const svg = svgSelectionRef.current;
       const zoom = zoomBehaviorRef.current;
@@ -149,6 +143,10 @@ export default function PinCard({
           zoom.transform,
           d3.zoomIdentity.translate(tx, ty).scale(ZOOM_SCALE),
         );
+
+      setTimeout(() => {
+        onShowPanelChange(true);
+      }, 1400);
     },
     [
       activePin,
@@ -158,86 +156,78 @@ export default function PinCard({
       resetZoom,
       audioRef,
       isPlayingRef,
+      onPageChange,
+      onActivePinChange,
+      onShowPanelChange,
     ],
   );
 
   return (
     <>
-      {/* 핀 점 + 연결선 SVG */}
       <svg className="pin-svg">
-        {pins.map((pin) => {
-          const pos = getScreenPos(pin.coords);
-          const isActive = activePin?.id === pin.id;
-          const { left, top } = getCardPos(pos.x, pos.y, pin.cardOffset);
-          const lineEnd = getLineEndPoint(pos.x, pos.y, left, top);
-
-          return (
-            <g key={pin.id}>
-              <line
-                className={`pin-line${isActive ? " pin-line--active" : ""}`}
-                x1={pos.x}
-                y1={pos.y}
-                x2={lineEnd.x}
-                y2={lineEnd.y}
-              />
-              <circle
-                className={"pin-dot"}
-                cx={pos.x}
-                cy={pos.y}
-                r={3}
-                onClick={(e) => handlePinClick(e, pin)}
-              />
-            </g>
-          );
-        })}
+        {pins
+          .filter((pin) => currentPage === "world" || pin.id === activePin?.id)
+          .map((pin) => {
+            const pos = getScreenPos(pin.coords);
+            const isActive = activePin?.id === pin.id;
+            const { left, top } = getCardPos(pos.x, pos.y, pin.cardOffset);
+            const lineEnd = getLineEndPoint(pos.x, pos.y, left, top);
+            return (
+              <g key={pin.id}>
+                <line
+                  className={`pin-line${isActive ? " pin-line--active" : ""}`}
+                  x1={pos.x}
+                  y1={pos.y}
+                  x2={lineEnd.x}
+                  y2={lineEnd.y}
+                />
+                <circle
+                  className="pin-dot"
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={3}
+                  onClick={(e) => handlePinClick(e, pin)}
+                />
+              </g>
+            );
+          })}
       </svg>
 
-      {/* 카드 - 항상 표시 */}
-      {pins.map((pin) => {
-        const pos = getScreenPos(pin.coords);
-        const { left, top } = getCardPos(pos.x, pos.y, pin.cardOffset);
-        return (
-          <div
-            key={pin.id}
-            className={"pin-card"}
-            style={{ left, top }}
-            onClick={(e) => handlePinClick(e, pin)}
-          >
-            <div className="pin-card_top">
-              <h1 className="pin-card_location">{pin.location1}</h1>
-              <span className="pin-card_country">{pin.country}</span>
-              <h1 className="pin-card_location">{pin.location2}</h1>
-            </div>
-            <div className="pin-card_divider" />
-            {pin.projects.map((projects, i) => (
-              <div key={i} className="pin-card_meta">
-                <div className="pin-card_meta-inner">
-                  <div className="pin-card_meta-front">
-                    <span className="pin-card_title">{projects.title}</span>
-                    <span className="pin-card_date">{projects.date}</span>
-                  </div>
-                  <div className="pin-card_meta-back">
-                    <span className="pin-card_title">{projects.title}</span>
-                    <span className="pin-card_date">{projects.date}</span>
+      {pins
+        .filter((pin) => currentPage === "world" || pin.id === activePin?.id)
+        .map((pin) => {
+          const pos = getScreenPos(pin.coords);
+          const { left, top } = getCardPos(pos.x, pos.y, pin.cardOffset);
+          return (
+            <div
+              key={pin.id}
+              className="pin-card"
+              style={{ left, top }}
+              onClick={(e) => handlePinClick(e, pin)}
+            >
+              <div className="pin-card_top">
+                <h1 className="pin-card_location">{pin.location1}</h1>
+                <span className="pin-card_country">{pin.country}</span>
+                <h1 className="pin-card_location">{pin.location2}</h1>
+              </div>
+              <div className="pin-card_divider" />
+              {pin.projects.map((project, i) => (
+                <div key={i} className="pin-card_meta">
+                  <div className="pin-card_meta-inner">
+                    <div className="pin-card_meta-front">
+                      <span className="pin-card_title">{project.title}</span>
+                      <span className="pin-card_date">{project.date}</span>
+                    </div>
+                    <div className="pin-card_meta-back">
+                      <span className="pin-card_title">{project.title}</span>
+                      <span className="pin-card_date">{project.date}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            {/* 추후 사용할 지 고민 */}
-            {/* {pin.link && (
-              <a
-                href={pin.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="pin-card_link"
-                onClick={(e) => e.stopPropagation()}
-              >
-                View Project →
-              </a>
-            )} */}
-          </div>
-        );
-      })}
+              ))}
+            </div>
+          );
+        })}
     </>
   );
 }
