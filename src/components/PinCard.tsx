@@ -220,7 +220,10 @@ export default function PinCard({
           );
 
           const threshold = 180;
-          const pull = dist < threshold ? 1 - dist / threshold : 0;
+          const pull =
+            dist < threshold && currentPage === "world"
+              ? 1 - dist / threshold
+              : 0;
           const dx = (mousePos.x - cardCenterX) * pull * 1;
           const dy = (mousePos.y - cardCenterY) * pull * 1;
 
