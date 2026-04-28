@@ -66,6 +66,11 @@ export default function PinCard({
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
+  // meta에 들어가면 멈추게
+  const [isHoveringMeta, setIsHoveringMeta] = useState(false);
+  const onMouseEnterMeta = () => setIsHoveringMeta(true);
+  const onMouseLeaveMeta = () => setIsHoveringMeta(false);
+
   const getCardPos = (
     screenX: number,
     screenY: number,
@@ -219,9 +224,9 @@ export default function PinCard({
             (mousePos.x - cardCenterX) ** 2 + (mousePos.y - cardCenterY) ** 2,
           );
 
-          const threshold = 180;
+          const threshold = 150;
           const pull =
-            dist < threshold && currentPage === "world"
+            dist < threshold && currentPage === "world" && !isHoveringMeta
               ? 1 - dist / threshold
               : 0;
           const dx = (mousePos.x - cardCenterX) * pull * 1;
@@ -245,20 +250,26 @@ export default function PinCard({
                 <h1 className="pin-card_location">{pin.location2}</h1>
               </div>
               <div className="pin-card_divider" />
-              {pin.projects.map((project, i) => (
-                <div key={i} className="pin-card_meta">
-                  <div className="pin-card_meta-inner">
-                    <div className="pin-card_meta-front">
-                      <span className="pin-card_title">{project.title}</span>
-                      <span className="pin-card_date">{project.date}</span>
-                    </div>
-                    <div className="pin-card_meta-back">
-                      <span className="pin-card_title">{project.title}</span>
-                      <span className="pin-card_date">{project.date}</span>
+              <div
+                onMouseEnter={onMouseEnterMeta} // 마우스 진입 시 자석 멈춤
+                onMouseLeave={onMouseLeaveMeta} // 마우스 이탈 시 자석 재개
+                className="pin-card_bot"
+              >
+                {pin.projects.map((project, i) => (
+                  <div key={i} className="pin-card_meta">
+                    <div className="pin-card_meta-inner">
+                      <div className="pin-card_meta-front">
+                        <span className="pin-card_title">{project.title}</span>
+                        <span className="pin-card_date">{project.date}</span>
+                      </div>
+                      <div className="pin-card_meta-back">
+                        <span className="pin-card_title">{project.title}</span>
+                        <span className="pin-card_date">{project.date}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           );
         })}
