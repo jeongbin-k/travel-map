@@ -5,6 +5,9 @@
   font-weight: normal;
   font-display: swap;
 }
+.pin-card_top {
+  margin-bottom: 15px;
+}
 .project-panel {
   position: fixed;
   inset: 0;
@@ -40,10 +43,6 @@
 
 .project-panel_back:hover {
   color: #ffffff;
-}
-
-.project-panel_header {
-  margin-bottom: 48px;
 }
 
 .project-panel_city {
@@ -209,6 +208,19 @@
   transition: transform 0.4s ease;
 }
 
+.pin-card_meta-inner::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(15, 15, 15, 0.8);
+  z-index: 10;
+  transform: translateZ(1px);
+  pointer-events: none;
+}
+
 .pin-card_meta:hover .pin-card_meta-inner {
   transform: rotateX(180deg);
 }
@@ -239,6 +251,18 @@
   transform: rotateX(180deg);
   background: linear-gradient(to bottom, #9f9f9f 50%, #ffffff 50%);
 }
+.pin-card_meta-back::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(15, 15, 15, 0.8);
+  z-index: 10;
+  transform: translateZ(1px);
+  pointer-events: none;
+}
 .pin-card_meta-front > span {
   font-size: 0.875rem;
   color: #fff;
@@ -248,52 +272,5 @@
 .pin-card_meta-back .pin-card_date {
   font-size: 0.875rem;
   color: #000000;
-}
-
-/* 구분선 */
-.pin-card_divider {
-  height: 1px;
-  background-color: #222222;
-  margin: 5px 0;
-}
-
-/* 설명 */
-.pin-card_description {
-  font-size: 11px;
-  color: #aaaaaa;
-  line-height: 1.5;
-  margin-bottom: 8px;
-}
-
-/* 태그 */
-.pin-card_tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 10px;
-}
-
-.pin-card_tag {
-  font-size: 9px;
-  color: #888888;
-  background-color: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  padding: 2px 6px;
-  letter-spacing: 0.04em;
-}
-
-/* 링크 */
-.pin-card_link {
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  color: #e63946;
-  text-decoration: none;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: color 0.15s ease;
-}
-
-.pin-card_link:hover {
-  color: #ff6b6b;
+  font-weight: 600;
 }

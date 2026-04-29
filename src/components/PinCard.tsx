@@ -249,7 +249,6 @@ export default function PinCard({
                 <span className="pin-card_country">{pin.country}</span>
                 <h1 className="pin-card_location">{pin.location2}</h1>
               </div>
-              <div className="pin-card_divider" />
               <div
                 onMouseEnter={onMouseEnterMeta} // 마우스 진입 시 자석 멈춤
                 onMouseLeave={onMouseLeaveMeta} // 마우스 이탈 시 자석 재개
