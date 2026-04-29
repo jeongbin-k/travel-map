@@ -100,7 +100,7 @@ function App() {
     svg
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("preserveAspectRatio", "xMidYMid meet")
-      .style("background-color", "#181818")
+      .style("background-color", "#1d1d1d")
       .style("width", "100%")
       .style("height", "100vh");
 
@@ -170,7 +170,7 @@ function App() {
           .call(zoomBehavior.transform, d3.zoomIdentity);
       } else {
         if (airplaneAudioRef.current && isPlayingRef.current) {
-          airplaneAudioRef.current.currentTime = 0; // 재생 위치 초기화
+          airplaneAudioRef.current.currentTime = 0;
           airplaneAudioRef.current.volume = 0.7;
           airplaneAudioRef.current
             .play()
