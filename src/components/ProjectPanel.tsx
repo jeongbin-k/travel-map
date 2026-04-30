@@ -51,7 +51,7 @@ function ProjectPanel({
         if (e.deltaY > 0) setCurrent((c) => (c + 1) % projects.length);
         else setCurrent((c) => (c - 1 + projects.length) % projects.length);
         wheelTimer.current = null;
-      }, 100);
+      }, 80);
     };
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => window.removeEventListener("wheel", handleWheel);

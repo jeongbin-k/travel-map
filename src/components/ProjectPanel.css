@@ -141,15 +141,17 @@
 }
 
 .carousel-card--skill {
-  background: #0a0a0a;
-  border: 1px solid #2a2a2a;
-  color: #ffffff;
+  background: linear-gradient(to bottom, #334155 0%, #0f172a 50%, #020617 100%);
+  color: #94a3b8;
 }
 
 .carousel-card--design {
-  background: #1a1a1a;
-  border: 1px solid #333;
-  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 1) 0%,
+    rgba(168, 85, 247, 1) 100%
+  );
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .carousel-card_type {
@@ -163,10 +165,10 @@
   color: #0a0a0a;
 }
 .carousel-card--skill .carousel-card_type {
-  color: #888;
+  color: #fff;
 }
 .carousel-card--design .carousel-card_type {
-  color: #888;
+  color: #fff;
 }
 
 .carousel-card_title {
