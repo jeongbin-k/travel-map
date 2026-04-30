@@ -89,6 +89,7 @@
   text-transform: lowercase;
   line-height: 1;
   letter-spacing: -0.02em;
+  height: 80px;
 }
 
 .project-panel_country {

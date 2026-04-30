@@ -34,7 +34,7 @@ function ProjectPanel({
       setDisplayedCity(fullCity.slice(0, i + 1));
       i++;
       if (i >= fullCity.length) clearInterval(interval);
-    }, 400);
+    }, 300);
     return () => clearInterval(interval);
   }, [showPanel, fullCity]);
 
@@ -46,14 +46,13 @@ function ProjectPanel({
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (wheelTimer.current) return;
-      if (e.deltaY > 0) setCurrent((c) => (c + 1) % projects.length);
-      else setCurrent((c) => (c - 1 + projects.length) % projects.length);
+      if (wheelTimer.current) clearTimeout(wheelTimer.current);
       wheelTimer.current = setTimeout(() => {
+        if (e.deltaY > 0) setCurrent((c) => (c + 1) % projects.length);
+        else setCurrent((c) => (c - 1 + projects.length) % projects.length);
         wheelTimer.current = null;
-      }, 500);
+      }, 100);
     };
-
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => window.removeEventListener("wheel", handleWheel);
   }, [currentPage, projects.length]);
