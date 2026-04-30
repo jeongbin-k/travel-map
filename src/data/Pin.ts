@@ -15,6 +15,9 @@ export interface ProjectItem {
   description: string;
   tags: string[];
   link?: string;
+  image?: string;
+  github?: string;
+  proficiency?: { label: string; value: number }[];
 }
 
 export const pins: PinData[] = [
