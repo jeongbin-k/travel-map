@@ -23,6 +23,17 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="header">
+      <button className="soundtrack-btn" onClick={onSoundtrackClick}>
+        <span className="equalizer">
+          {[1, 2, 3, 4, 5].map((_, i) => (
+            <span
+              key={i}
+              className={`bar bar-${i + 1} ${isPlaying ? "playing" : ""}`}
+            />
+          ))}
+        </span>
+        <span className="soundtrack-label">soundtrack</span>
+      </button>
       <nav className="header-nav">
         {NAV_ITEMS.map((item, i) => (
           <button
@@ -35,18 +46,6 @@ export default function Header({
           </button>
         ))}
       </nav>
-
-      <button className="soundtrack-btn" onClick={onSoundtrackClick}>
-        <span className="equalizer">
-          {[1, 2, 3, 4, 5].map((_, i) => (
-            <span
-              key={i}
-              className={`bar bar-${i + 1} ${isPlaying ? "playing" : ""}`}
-            />
-          ))}
-        </span>
-        <span className="soundtrack-label">soundtrack</span>
-      </button>
     </header>
   );
 }
