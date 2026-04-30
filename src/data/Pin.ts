@@ -47,6 +47,11 @@ export const pins: PinData[] = [
         description: "북마크 관리 및 공유를 위한 풀스택 서비스",
         tags: ["JavaScript"],
         link: "https://clippi-seven.vercel.app/",
+        proficiency: [
+          { label: "Syntax", value: 90 },
+          { label: "ES6+", value: 85 },
+          { label: "Async", value: 78 },
+        ],
       },
       {
         title: "TypeScript",
@@ -55,6 +60,11 @@ export const pins: PinData[] = [
         description: "북마크 관리 및 공유를 위한 풀스택 서비스",
         tags: ["TypeScript"],
         link: "https://clippi-seven.vercel.app/",
+        proficiency: [
+          { label: "Types", value: 88 },
+          { label: "Generics", value: 72 },
+          { label: "Utility", value: 65 },
+        ],
       },
     ],
     country: "south korea",
