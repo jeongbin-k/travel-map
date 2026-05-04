@@ -57,7 +57,8 @@ function ProjectPanel({
     return () => window.removeEventListener("wheel", handleWheel);
   }, [currentPage, projects.length]);
 
-  if (currentPage !== "project" || !activePin) return null;
+  if ((currentPage !== "project" && currentPage !== "detail") || !activePin)
+    return null;
 
   const activeProject = projects[current];
 
