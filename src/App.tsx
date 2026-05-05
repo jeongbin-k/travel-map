@@ -11,7 +11,8 @@ import "./reset.css";
 import Header from "./components/Header";
 import PinCard from "./components/PinCard";
 import ProjectPanel from "./components/ProjectPanel";
-import { type PinData } from "./data/Pin";
+import DetailPanel from "./components/DetailPanel";
+import { type PinData, type ProjectItem } from "./data/Pin";
 type Page = "world" | "project" | "detail";
 
 function App() {
@@ -59,6 +60,11 @@ function App() {
       setCurrentPage(page);
     }
   };
+
+  // detail 관련
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(
+    null,
+  );
 
   //  핀카드, 프로젝트 나누는
   const [activePin, setActivePin] = useState<PinData | null>(null);
@@ -298,7 +304,16 @@ function App() {
         showPanel={showPanel}
         currentPage={currentPage}
         onBack={handleBackToWorld}
-        onProjectClick={() => setCurrentPage("detail")}
+        onProjectClick={(project) => {
+          setSelectedProject(project);
+          setCurrentPage("detail");
+        }}
+      />
+      <DetailPanel
+        project={selectedProject}
+        show={currentPage === "detail"}
+        onClose={() => setCurrentPage("project")}
+        location={`${activePin?.location1 ?? ""}${activePin?.location2 ?? ""}`}
       />
     </div>
   );
