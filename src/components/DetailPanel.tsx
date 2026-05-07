@@ -53,8 +53,10 @@ function ProgressBar({
 
   useEffect(() => {
     if (!animate) {
-      setCurrent(0);
-      setWidth(0);
+      setTimeout(() => {
+        setCurrent(0);
+        setWidth(0);
+      }, 0);
       return;
     }
     const t = setTimeout(() => {
